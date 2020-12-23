@@ -13,6 +13,8 @@ from .constants import (
     NHS_USER_INFO_TO_FORM_ANSWERS,
     SESSION_KEY_LOCATION_TIER,
     SESSION_KEY_IS_POSTCODE_IN_ENGLAND,
+    SESSION_KEY_TEST_LOCATION_TIER,
+    SESSION_KEY_TEST_IS_POSTCODE_IN_ENGLAND,
     PostcodeTier
 )
 from .form_utils import clean_nhs_number, postcode_with_spaces
@@ -320,9 +322,18 @@ def load_answers_into_session_if_available():
             session["medical_conditions"] = medical_conditions
         session["accessing_saved_answers"] = True
         set_location_tier(tier_at_submission.get("longValue"))
+        update_test_postcode_data(address_postcode["stringValue"],current_app)
         return True
     return False
 
+
+def update_test_postcode_data(postcode,app):
+    test_location_tier = _get_test_postcode_tier(postcode, app)
+    if not test_location_tier is None:
+        set_test_location_tier(test_location_tier)
+        set_test_is_postcode_in_england(True)
+    else:
+        set_test_location_tier(None)
 
 def _format_nhs_user_info_answer(answers_key, nhs_answer):
     if "nhs_number" in answers_key:
@@ -339,21 +350,38 @@ def set_form_answers_from_nhs_user_info(nhs_user_info):
         formatted_answer = _format_nhs_user_info_answer(answers_key, nhs_answer)
         _set_form_answer(answers_key, formatted_answer)
 
+def _get_test_postcode_tier(postcode, app):
+    return app.config["TEST_POSTCODE_TIERS"].get(postcode, None)
+    
 
 def set_location_tier(location_tier):
     session[SESSION_KEY_LOCATION_TIER] = location_tier
 
+def set_test_location_tier(location_tier):
+    session[SESSION_KEY_TEST_LOCATION_TIER] = location_tier
 
 def get_location_tier():
-    return session.get(SESSION_KEY_LOCATION_TIER, None)
+    test_location_tier =session.get(SESSION_KEY_TEST_LOCATION_TIER, None)
+    if not test_location_tier is None:
+        return test_location_tier 
+    else:
+        return session.get(SESSION_KEY_LOCATION_TIER, None)
 
 
 def set_is_postcode_in_england(is_postcode_in_england):
     session[SESSION_KEY_IS_POSTCODE_IN_ENGLAND] = is_postcode_in_england
 
 
+def set_test_is_postcode_in_england(is_postcode_in_england):
+    session[SESSION_KEY_TEST_IS_POSTCODE_IN_ENGLAND] = is_postcode_in_england
+
+
 def get_is_postcode_in_england():
-    return session.get(SESSION_KEY_IS_POSTCODE_IN_ENGLAND, None)
+    test_is_postcode_in_england = session.get(SESSION_KEY_TEST_IS_POSTCODE_IN_ENGLAND, None)
+    if not test_is_postcode_in_england  is None:
+        return test_is_postcode_in_england
+    else:
+        return session.get(SESSION_KEY_IS_POSTCODE_IN_ENGLAND, None)
 
 
 def _set_form_answer(answers_key_list, answer):

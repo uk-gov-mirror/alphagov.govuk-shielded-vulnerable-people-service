@@ -6,7 +6,7 @@ from .shared.form_utils import format_postcode
 from .shared.querystring_utils import append_querystring_params
 from .shared.render import render_template_with_title
 from .shared.routing import route_to_next_form_page
-from .shared.session import get_errors_from_session, request_form, get_answer_from_form
+from .shared.session import get_errors_from_session, request_form, get_answer_from_form, update_test_postcode_data
 from .shared.location_tier import update_is_postcode_in_england
 from .shared.validation import validate_postcode
 
@@ -36,6 +36,7 @@ def post_postcode_verification():
         return redirect("/postcode-eligibility")
 
     update_is_postcode_in_england(session["postcode"], current_app)
+    update_test_postcode_data(session["postcode"],current_app)
 
     session["error_items"] = {}
     return route_to_next_form_page()

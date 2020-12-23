@@ -1,6 +1,9 @@
 from http import HTTPStatus
 
 import sentry_sdk
+import json
+import os
+
 from flask import Flask, render_template, session
 from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFProtect
@@ -48,6 +51,7 @@ def verify_config(app):
         raise ValueError(f"The following config keys are missing: {', '.join(required_keys - present_keys)}")
 
 
+
 def create_app(scriptinfo):
     app = Flask(__name__, static_url_path="/assets", instance_relative_config=True)
     app.config.from_envvar("FLASK_CONFIG_FILE")
@@ -85,6 +89,8 @@ def create_app(scriptinfo):
     app.context_processor(utility_processor)
 
     app.add_template_filter(postcode_with_spaces)
+    test_postcode_tiers = os.environ.get("TEST_POSTCODE_TIERS","{}")
+    app.config["TEST_POSTCODE_TIERS"]  =  json.loads(test_postcode_tiers)
 
     return app
 

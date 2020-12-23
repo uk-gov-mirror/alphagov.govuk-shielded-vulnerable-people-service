@@ -8,7 +8,7 @@ from .shared.constants import SESSION_KEY_ADDRESS_SELECTED
 from .shared.querystring_utils import append_querystring_params
 from .shared.render import render_template_with_title
 from .shared.routing import route_to_next_form_page
-from .shared.session import get_errors_from_session, request_form, form_answers
+from .shared.session import get_errors_from_session, request_form, form_answers, update_test_postcode_data
 from .shared.validation import validate_address_lookup
 from .shared.location_tier import update_location_tier_by_uprn
 
@@ -63,7 +63,10 @@ def post_address_lookup():
     session["error_items"] = {}
 
     uprn = {**json.loads(request_form()["address"])}.get("uprn", None)
+    postcode = {**json.loads(request_form()["address"])}.get("postcode", None)
     update_location_tier_by_uprn(uprn, current_app)
+    update_test_postcode_data(session["postcode"],current_app)
+    
     if not validate_address_lookup():
         return redirect("/address-lookup")
     session[SESSION_KEY_ADDRESS_SELECTED] = True

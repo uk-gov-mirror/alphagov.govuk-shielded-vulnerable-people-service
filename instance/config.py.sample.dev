@@ -7,6 +7,7 @@ GA_TRACKING_ID = "TEMP"
 GA_CROSS_DOMAIN_TRACKING_ID = "TEMP"
 SENTRY_DSN = "https://abc@sentry.io/123/321"
 
+TEST_POSTCODE_TIERS = '{"NM1PPH":1, "NNNNNN" : 2, "L244AD": 3, "BB11TA":4 , "LE674AY" :3  }'
 
 # NHS OIDC config
 NHS_OIDC_AUTHORITY_URL = "https://auth.sandpit.signin.nhs.uk"

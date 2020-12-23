@@ -3,6 +3,7 @@ import logging
 from vulnerable_people_form.form_pages.shared.logger_utils import init_logger, log_event_names, create_log_message
 from .persistence import generate_string_parameter, generate_int_parameter, execute_sql
 import json
+import os
 
 from vulnerable_people_form.form_pages.shared.constants import PostcodeTier
 
@@ -31,7 +32,6 @@ def get_postcode_tier(postcode):
 
     logger.info(create_log_message(log_event_names["POSTCODE_TO_TIER_SUCCESS"],
                                    f"Successfully retrieved tier: {tier} for postcode: {postcode}"))
-
     return tier
 
 

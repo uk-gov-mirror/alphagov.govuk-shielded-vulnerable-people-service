@@ -7,7 +7,7 @@ from .shared.location_tier import update_location_tier_by_postcode,  update_is_p
 from .shared.querystring_utils import append_querystring_params
 from .shared.render import render_template_with_title
 from .shared.routing import route_to_next_form_page
-from .shared.session import form_answers, get_errors_from_session, request_form
+from .shared.session import form_answers, get_errors_from_session, request_form, update_test_postcode_data
 from .shared.validation import validate_support_address
 
 
@@ -29,6 +29,7 @@ def post_support_address():
 
     update_is_postcode_in_england(session["postcode"], current_app)
     update_location_tier_by_postcode(session["postcode"], current_app)
+    update_test_postcode_data(session["postcode"],current_app) 
 
     session[SESSION_KEY_ADDRESS_SELECTED] = False
     return route_to_next_form_page()
