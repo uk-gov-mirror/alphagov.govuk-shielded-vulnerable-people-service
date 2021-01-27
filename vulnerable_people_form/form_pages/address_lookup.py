@@ -17,7 +17,11 @@ from .shared.location_tier import update_location_status_by_uprn, update_locatio
 def get_address_lookup():
     postcode = session.get("postcode")
     if not postcode:
-        postcode = form_answers()["support_address"]["postcode"]
+        if form_answers().get("support_address"):
+            postcode = form_answers()["support_address"]["postcode"]
+        else:
+            return redirect("/postcode-lookup")
+
     try:
         addresses = postcode_lookup_helper.get_addresses_from_postcode(postcode)
     except postcode_lookup_helper.PostcodeNotFound:
